@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nour - Sales Dashboard</title>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #fdeaf2, #fdf3f8);
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    /* FLOWERS */
+    .flower, .flower-small, .flower-tiny {
+      position: absolute;
+      opacity: 0.35;
+      animation: float 12s infinite ease-in-out;
+      pointer-events: none;
+    }
+
+    .flower { width: 70px; }
+    .flower-small { width: 45px; opacity: .28; animation-duration: 14s; }
+    .flower-tiny { width: 28px; opacity: .22; animation-duration: 16s; }
+
+    @keyframes float {
+      0% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-40px) rotate(20deg); }
+      100% { transform: translateY(0) rotate(0deg); }
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 70px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 25px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+      text-align: center;
+      position: relative;
+    }
+
+    h1 {
+      color: #b4577c;
+      font-size: 26px;
+      font-weight: 700;
+      margin-bottom: 25px;
+    }
+
+    label {
+      display: block;
+      text-align: left;
+      font-weight: 600;
+      margin: 10px 0 5px;
+      color: #7a4a60;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid #e4c6d4;
+      background: #fff7fb;
+      outline: none;
+      font-size: 15px;
+      transition: 0.2s;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: #d08bab;
+      background: #fff1fa;
+    }
+
+    button, .pink-btn {
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      border: none;
+      background: #d08bab;
+      color: white;
+      font-size: 17px;
+      cursor: pointer;
+      margin-top: 15px;
+      transition: .3s;
+    }
+
+    button:hover, .pink-btn:hover {
+      background: #b96a8b;
+    }
+
+    #historyBox {
+      display: none;
+      margin-top: 20px;
+      background: #ffe5f1;
+      padding: 15px;
+      border-radius: 12px;
+      max-height: 350px;
+      overflow-y: auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 8px;
+      border-bottom: 1px solid #f3cddb;
+      text-align: center;
+    }
+
+    th {
+      background: #f7d1e1;
+      font-weight: 700;
+    }
+
+    .wa-btn {
+      background: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      padding: 12px;
+      border-radius: 12px;
+      border: 2px solid #ffb3d6;
+      margin-top: 10px;
+      text-decoration: none;
+      font-weight: 600;
+      color: #d85b9b;
+      transition: 0.3s;
+    }
+
+    .wa-btn:hover {
+      background: #ffd6e8;
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <!-- FLOWER IMAGES (loaded online, safe & stable) -->
+  <img src="فراشة الجميلة.jpeg" class="flower" style="top:20px; left:20px;">
+  <img src="وردد.jpeg" class="flower" style="top:60px; right:30px;">
+  <img src="download.jpeg" class="flower-small" style="bottom:120px; left:50px;">
+  <img src="فراشة الجميلة.jpeg" class="flower-tiny" style="top:350px; right:80px;">
+  <img src="وردد.jpeg" class="flower-small" style="bottom:200px; right:160px;">
+  <img src="فراشة الجميلة.jpeg" class="flower-tiny" style="top:200px; left:200px;">
+
+
+  <div class="container">
+    <h1>🌸 Nour — Sales  🌸</h1>
+
+    <label>Phone Number</label>
+    <input id="phone" type="text" placeholder="Enter phone…">
+
+    <label>Status</label>
+    <select id="status">
+      <option>Interested</option>
+      <option>Not Interested</option>
+      <option>No Answer</option>
+      <option>Call Later</option>
+      <option>WhatsApp Sent</option>
+      <option>Duplicate</option>
+    </select>
+
+    <label>Notes</label>
+    <textarea id="note" rows="3" placeholder="Write notes…"></textarea>
+
+    <button id="saveBtn">Save</button>
+
+    <a id="waBtn" href="#" target="_blank" class="wa-btn" style="display:none;">
+      <img src="فراشة الجميلة.jpeg" style="width:28px;">
+      Open WhatsApp
+    </a>
+
+    <button id="historyBtn" class="pink-btn">Show History</button>
+
+    <div id="historyBox"></div>
+  </div>
+
+
+  <script>
+    // WhatsApp auto-link
+    const phoneInput = document.getElementById("phone");
+    const waBtn = document.getElementById("waBtn");
+
+    phoneInput.addEventListener("input", () => {
+      let num = phoneInput.value.replace(/\D/g, "");
+      if (num.length >= 5) {
+        waBtn.style.display = "flex";
+        waBtn.href = "https://wa.me/" + num;
+      } else {
+        waBtn.style.display = "none";
+      }
+    });
+
+    // Local history
+    const historyKey = "nourSalesHistory";
+    function loadHistory() {
+      return JSON.parse(localStorage.getItem(historyKey) || "[]");
+    }
+    function saveHistory(entry) {
+      const list = loadHistory();
+      list.push(entry);
+      localStorage.setItem(historyKey, JSON.stringify(list));
+    }
+
+    // Save
+    document.getElementById("saveBtn").addEventListener("click", () => {
+      const p = phoneInput.value.trim();
+      const s = document.getElementById("status").value;
+      const n = document.getElementById("note").value.trim();
+
+      if (!p) return alert("Phone required");
+
+      const now = new Date();
+      const data = {
+        phone: p,
+        status: s,
+        note: n,
+        date: now.toLocaleDateString(),
+        time: now.toLocaleTimeString()
+      };
+
+      saveHistory(data);
+      alert("Saved!");
+
+      phoneInput.value = "";
+      document.getElementById("note").value = "";
+    });
+
+    // Show History
+    document.getElementById("historyBtn").addEventListener("click", () => {
+      const box = document.getElementById("historyBox");
+      box.style.display = box.style.display === "block" ? "none" : "block";
+      const list = loadHistory();
+
+      let html = "<table><tr><th>Phone</th><th>Status</th><th>Note</th><th>Date</th><th>Time</th></tr>";
+      list.forEach(item => {
+        html += `<tr>
+          <td>${item.phone}</td>
+          <td>${item.status}</td>
+          <td>${item.note}</td>
+          <td>${item.date}</td>
+          <td>${item.time}</td>
+        </tr>`;
+      });
+      html += "</table>";
+      box.innerHTML = html;
+    });
+  </script>
+
+</body>
+</html>
